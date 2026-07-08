@@ -1,8 +1,8 @@
-# 猎聘招聘自动化 Skill (Liepin Auto-Recruiting v2.3)
+# 猎聘招聘自动化 Skill (Liepin Auto-Recruiting v2.5)
 
 WorkBuddy AI 猎聘平台招聘自动化 Skill —— 通过 CDP 直连用户已登录的 Chrome 浏览器，零登录成本，完成从**搜索→评分→生成链接→发送邮件**的全流程招聘自动化。
 
-> **v2.3 核心升级（2026-07-07）**：简历链接获取（resIdEncode）、HTML格式输出、QQ邮箱SMTP发送邮件
+> **v2.5 说明（2026-07-08）**：本仓库只包含**通用招聘流程**与**通用角色评分/话术模板库**。所有公司敏感信息（公司名称、HR 姓名/邮箱、邮箱授权码、公司当前在招岗位的专属 JD/评分/话术）均外置为 `references/company_context.md`，该文件**仅本地保存，不纳入本仓库**。SKILL 中使用 `{{COMPANY_NAME}}` 等占位符，执行任务时由使用者从本地 `company_context.md` 加载并填充。
 
 ## ✨ 核心能力
 
@@ -14,17 +14,15 @@ WorkBuddy AI 猎聘平台招聘自动化 Skill —— 通过 CDP 直连用户已
 | 📞 联系方式获取 | 获取手机号/邮箱（需50猎币/人≈¥50） | 付费 |
 | 💬 站内沟通触达 | 发送「立即沟通」或「意向沟通」消息 | 免费 |
 | 📊 批量数据导出 | 导出为结构化CSV文件 | 免费 |
-| 🔗 简历链接生成 | 使用 resIdEncode 生成简历详情页链接 **v2.3新增** | 免费 |
-| 📧 HTML报告生成 | 生成格式化HTML报告（含"查看简历"按钮） **v2.3新增** | 免费 |
-| 📧 邮件发送 | 通过QQ邮箱SMTP发送HTML报告 **v2.3新增** | 免费 |
+| 🔗 简历链接生成 | 使用 resIdEncode 生成简历详情页链接 | 免费 |
+| 📧 HTML报告生成 | 生成格式化HTML报告（含"查看简历"按钮） | 免费 |
+| 📧 邮件发送 | 通过QQ邮箱SMTP发送HTML报告 | 免费 |
 
 ## 🚀 快速开始
 
 ### 安装（WorkBuddy）
 
 **方式一：对话中直接安装（推荐）**
-
-在 WorkBuddy 对话中输入：
 
 ```
 帮我安装这个 skill：
@@ -33,29 +31,26 @@ https://github.com/haha8d/liepin-auto-recruiting
 
 **方式二：下载 zip 手动导入**
 
-1. 下载 `liepin-auto-recruiting-2.3.zip`
+1. 下载 `liepin-auto-recruiting-2.5.zip`
 2. 打开 WorkBuddy → Skills 管理页面
 3. 点击「导入 Skill」→ 选择 zip 文件
 4. 导入成功后即可使用
+
+### 本地化配置（敏感信息外置）
+
+```bash
+# 复制并填写本地专属配置（此文件请勿提交到仓库）
+cp references/company_context.example.md references/company_context.md
+# 编辑 company_context.md，填入你的公司名称、HR 邮箱、QQ 授权码、岗位专属定义
+```
+
+> 若仓库未附带示例文件，可手动创建 `references/company_context.md`，按 SKILL.md「敏感信息加载约定」一节填写。
 
 ### 使用示例
 
 ```
 在猎聘上搜索CFO候选人
 帮我从猎聘找算法工程师，北京地区，3年以上经验
-猎聘搜索：投融资总监，要求有IPO经验
-```
-
-**带AI评分：**
-
-```
-猎聘搜索CFO候选人并评分，权重：上市经历30分+注册会计师15分+审计背景10分
-猎聘搜算法工程师并排名，985院校20+AI实习15+开源项目15+北京地区10
-```
-
-**完整流程（v2.3新增）：**
-
-```
 执行完整的猎聘招聘流程：搜索CFO（北京地区）→ AI评分 → 生成简历链接 → 发送HTML邮件
 ```
 
@@ -76,100 +71,69 @@ Skill 会自动通过 CDP Proxy（端口 3456）连接已打开的 Chrome Tab，
 1. 打开 `https://lpt.liepin.com`（猎聘HR后台）
 2. 验证登录状态（确认显示用户名）
 3. 点击左侧「搜索人才」
-4. 在搜索框输入关键词（如 `CFO`、`算法工程师`、`投融资总监`）
+4. 在搜索框输入关键词（如 `CFO`、`算法工程师`）
 5. 设置筛选条件（可选）：目标城市、期望城市、经验、教育、行业等
 6. 点击「搜索」按钮，等待结果加载
 
-**不同岗位类型的搜索策略：**
+**搜索关键词通用技巧：**
+- 英文职位名直接输入：`CFO`、`CTO`
+- 中文职位名：`财务总监`、`算法工程师`
+- 多个关键词用空格隔开：`CFO 上市 IPO`
+- 组合搜索：职位名 + 行业/技能关键词
 
-| 岗位类型 | 推荐搜索关键词 |
-|----------|---------------|
-| CFO/财务高管 | `CFO` `财务总监` `首席财务官` `财务VP` |
-| CTO/技术高管 | `CTO` `技术总监` `首席技术官` `研发VP` |
-| 算法工程师 | `算法工程师` `AI算法` `机器学习` `深度学习` |
-| 产品经理 | `产品经理` `PM` `产品总监` |
-| 投融资 | `投融资` `投资总监` `VP 投资` `IR总监` |
-| HRD | `HRD` `人力资源总监` `HRVP` `OD总监` |
-| 工艺开发工程师 | `细胞培养` `生物反应器` `工艺开发` `CMC` `上游工艺` |
+> 以 CFO 为例：基础搜索 `CFO` → 扩充召回 `财务总监 首席财务官 财务VP` → 精准搜索 `CFO 上市公司 IPO`
 
 ### Phase 2: AI智能评分
 
-支持 **7套预设评分模板**，也可完全自定义：
-
-| 模板名 | 适用岗位 |
-|--------|----------|
-| `cfo` | CFO/财务总监/首席财务官 |
-| `cto` | CTO/技术总监/首席技术官 |
-| `algorithm` | 算法工程师/AI工程师/机器学习 |
-| `pm` | 产品经理/高级产品经理 |
-| `investment` | 投融资总监/VP/IR总监 |
-| `hrd` | HRD/HRVP/人力资源总监 |
-| `bioprocess` | 工艺开发工程师（生物医药/细胞培养） |
-
-**示例（CFO评分模板）：**
+通用角色评分模板库见 `references/scoring_templates.md`（含 CFO/CTO/算法/产品/投融资/HRD 等通用模板）。**公司专属权重/关键词覆盖**维护在本地 `references/company_context.md`（不在此仓库）。以 CFO 作为示例模板：
 
 | 维度 | 权重 | 评分标准 |
 |------|------|----------|
-| 上市公司CFO经验 | 30分 | 有上市公司CFO/财务总监经验得满分 |
-| 注册会计师CPA | 15分 | 有CPA/ACCA得满分 |
-| 四大/顶级事务所 | 15分 | 德勤/普华永道/毕马威/安永得满分 |
-| 审计背景 | 10分 | 有审计总监/经理经验 |
-| MBA/EMBA | 8分 | 有MBA/EMBA学位 |
-| 行业匹配 | 5分 | 与目标行业相关 |
-| 名校背景 | 5分 | 985/QS前100/清北复交 |
-| 资深加分 | +2~5分 | 15年+加2分，20年+加5分 |
+| 上市公司CFO经验 | 30 | 有上市公司CFO/财务总监经验得满分 |
+| 注册会计师CPA | 15 | 有CPA/ACCA得满分 |
+| 四大/顶级事务所 | 15 | 德勤/普华永道/毕马威/安永得满分 |
+| 审计背景 | 10 | 有审计总监/经理经验 |
+| MBA/EMBA | 8 | 有MBA/EMBA学位 |
+| 行业匹配 | 5 | 与目标行业相关 |
+| 名校背景 | 5 | 985/QS前100/清北复交 |
+| 资深加分 | +2~5 | 15年+加2分，20年+加5分 |
 
-### Phase 3: 获取简历链接 ⭐ v2.3核心升级
+> 其他岗位请参照 `references/scoring_templates.md` 的通用模板，或在本地 `company_context.md` 中定义公司专属权重，或直接用 `--custom` 自定义规则（见下方「评分工具」）。
 
-> **v2.3升级**：使用 `resIdEncode` 参数生成简历详情页链接（不再使用转发链接）
+### Phase 3: 获取简历链接
 
-猎聘个人主页链接的正确格式：
+> 使用 `resIdEncode` 参数生成简历详情页链接（不再使用转发链接）
+
 ```
 https://lpt.liepin.com/resume/detail?resIdEncode=<id>
 ```
 
-**关键经验：**
 - ✅ 必须使用 `resIdEncode`（不是 `resumeId`）
 - ✅ 从搜索结果页的候选人卡片链接中提取 `resIdEncode` 值
 - ✅ 此链接需要登录猎聘HR后台才能查看完整简历
 
-### Phase 4: 生成HTML报告并发送邮件 ⭐ v2.3核心升级
+### Phase 4: 生成HTML报告并发送邮件
 
-> **v2.3升级**：生成HTML格式报告（含表格和"查看简历"按钮），通过QQ邮箱SMTP发送
-
-**生成HTML报告：**
-
-生成包含候选人表格的HTML文件，每个候选人对应一个"查看简历"按钮：
-
-```html
-<a class="link-btn" href="https://lpt.liepin.com/resume/detail?resIdEncode={resIdEncode}" target="_blank">查看简历</a>
-```
-
-**发送邮件（QQ邮箱SMTP）：**
+生成HTML格式报告（含表格和"查看简历"按钮），通过QQ邮箱SMTP发送。凭据来自本地 `company_context.md`，勿硬编码：
 
 ```bash
-# 前置条件：开通QQ邮箱IMAP/SMTP服务并获取授权码
-export QQ_EMAIL_ACCOUNT="<your-qq-email>@qq.com"
-export QQ_EMAIL_AUTH_CODE="<your-auth-code>"
-
-# 发送HTML邮件
+# 凭据从本地 company_context.md 读取后注入环境变量
 cat 候选人链接.html | \
-  QQ_EMAIL_ACCOUNT="<your-qq-email>@qq.com" \
-  QQ_EMAIL_AUTH_CODE="<your-auth-code>" \
-  node scripts/send.js "hr@example.com" "候选人简历链接" --stdin --html
+  QQ_EMAIL_ACCOUNT="{{SENDER_EMAIL}}" \
+  QQ_EMAIL_AUTH_CODE="{{QQ_AUTH_CODE}}" \
+  node scripts/send.js "{{HR_EMAIL}}" "候选人简历链接" --stdin --html
 ```
 
 > 也支持 QQ邮箱 MCP 方式发送（需要两步确认，确认令牌5分钟过期）
 
 ### Phase 5: 站内消息触达
 
-自动发送定制化招呼语，支持按岗位类型自动匹配话术模板。
+自动发送定制化招呼语（按岗位自定义）。通用话术框架见 `references/message_templates.md`，公司专属话术在本地 `company_context.md`。以 CFO 为例：
 
-**话术模板库包含：**
-- 高管岗位话术（CFO、CTO、投融资总监）
-- 专业岗位话术（算法工程师、开发工程师、产品经理、数据分析师、工艺开发工程师）
-- 应届生/实习生话术
-- 消息跟进模板（第二次触达、面试邀约）
+```
+{姓名}老师您好！我是{公司名}的HR。看到您在{最近公司}担任{职位}的丰富经验，
+特别是在{具体领域}方面的深厚积累。我们公司目前正在寻找一位有上市/IPO财务管理经验的CFO，不知您是否方便聊聊？
+```
 
 > ⚠️ **速度控制**：每次操作间隔≥2秒，单日建议最多触达20-30位候选人，避免被平台检测封禁。
 
@@ -191,12 +155,12 @@ cat 候选人链接.html | \
 
 ## 📦 评分工具（candidate_scorer.py）
 
-内置通用化AI评分引擎，支持任意岗位的候选人打分排序。
+内置通用化AI评分引擎，预置通用角色模板（`cfo`/`cto`/`algorithm`/`pm`/`investment`/`hrd`），支持任意岗位通过 `--custom` 自定义评分。
 
 ### 使用方法
 
 ```bash
-# 使用预设模板评分
+# 使用 cfo 示例模板评分
 python3 scripts/candidate_scorer.py \
   --input candidates.csv \
   --template cfo \
@@ -211,7 +175,7 @@ python3 scripts/candidate_scorer.py \
 # 输出TOP 20
 python3 scripts/candidate_scorer.py \
   --input candidates.csv \
-  --template bioprocess \
+  --template cfo \
   --target-city 北京 \
   --top 20 \
   --output top20.csv
@@ -247,33 +211,35 @@ Skill 支持两种 CDP 连接方式：
 ## 📋 文件结构
 
 ```
-liepin-auto-recruiting-2.3/
-├── SKILL.md                       # Skill 主文档（WorkBuddy 加载）
+liepin-auto-recruiting-2.5/
+├── SKILL.md                       # Skill 主文档（WorkBuddy 加载，含 {{占位符}}）
 ├── README.md                      # 本文件
-├── references/
-│   ├── scoring_templates.md     # 评分权重模板库
-│   └── message_templates.md    # 沟通话术模板库
-└── scripts/
-    └── candidate_scorer.py      # 候选人AI评分工具（命令行）
+├── scripts/
+│   └── candidate_scorer.py      # 候选人AI评分工具（预设通用角色模板 + --custom）
+└── references/
+    ├── scoring_templates.md      # 通用角色评分权重模板库（CFO/CTO/算法/产品/投融资/HRD）
+    └── message_templates.md      # 通用沟通话术模板库
 ```
+
+> ⚠️ `references/company_context.md`（公司敏感信息：公司名称、HR、授权码、岗位专属定义）只存在于**使用者本地**，请勿提交到本仓库。SKILL.md 中所有 `{{占位符}}` 均从该文件加载填充。
 
 ## 📝 版本历史
 
-### v2.3 (2026-07-07)
+### v2.5 (2026-07-08)
 
-- **⭐ 简历链接获取升级**：使用 `resIdEncode` 参数生成简历详情页链接（不再使用转发链接）
-- **⭐ HTML报告输出**：生成HTML格式报告（含表格和"查看简历"按钮）
-- **⭐ 邮件发送升级**：支持QQ邮箱SMTP发送HTML邮件（已验证授权码有效，不会过期）
-- **新增完整评分模板库**：7套预设评分模板
-- **新增完整话术模板库**：高管岗位、专业岗位、应届生、消息跟进等话术
-- **新增搜索关键词规则**：不同岗位类型的搜索策略和筛选条件设置规则
-- **优化文档结构**：按实际执行顺序重新组织Phase 0-8
+- **敏感信息外置**：公司名称、HR 姓名/邮箱、QQ 授权码、公司当前在招岗位的专属 JD/评分/话术 全部外置为本地 `references/company_context.md`（**不纳入本仓库**）
+- **SKILL.md 改为通用方法论**：仅保留流程与 `{{COMPANY_NAME}}`/`{{HR_NAME}}`/`{{HR_EMAIL}}`/`{{SENDER_EMAIL}}`/`{{QQ_AUTH_CODE}}` 占位符，执行时从本地 company_context 加载
+- **模板库重新纳入版本管理**：`references/scoring_templates.md`、`message_templates.md` 保留为**通用角色库**（已去除公司专属暗示）
+- **脚本瘦身**：`candidate_scorer.py` 移除公司专属模板，仅保留通用角色模板 + `--custom`
+
+### v2.4 (2026-07-08)
+
+- 调整仓库定位：只提交通用招聘流程（SKILL 本身）；岗位专属模板不纳入版本管理
+- CFO 招聘作为示例模板贯穿全文
 
 ### v2.0 (2026-06-01)
 
 - **新增 CDP 直连支持**：复用用户已登录 Chrome，无需扫码
-- **新增生物医药工艺开发工程师评分模板**（`bioprocess`）
-- **修复** `candidate_scorer.py` 中的多个 bug
 - **新增** HTML 邮件生成功能
 - **更新** 登录流程说明
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-猎聘候选人评分工具 (Candidate Scorer) v2.0
+猎聘候选人评分工具 (Candidate Scorer) v2.5
 通用化的AI评分引擎，支持任意岗位的候选人打分排序
 
 用法:
@@ -9,11 +9,16 @@
 
 参数:
   --input    输入CSV文件（猎聘导出的候选人数据）
-  --template 使用预设模板 (cfo|cto|algorithm|pm|investment|hrd|bioprocess)
+  --template 使用预设通用模板 (cfo|cto|algorithm|pm|investment|hrd)
   --custom   自定义评分规则，格式: "维度名(权重),维度名(权重)"
   --output   输出文件路径（默认: scored_candidates.csv）
   --top      仅输出TOP N条（默认: 全部）
   --target-city  目标城市（用于地区匹配加分）
+
+说明:
+  公司专属角色模板（含具体权重/关键词/设备要求）统一维护在
+  references/company_context.md 第4节，不在本脚本内置。
+  如某岗位在 company_context 中定义了专属模板，建议直接用 --custom 传入对应规则。
 """
 
 import csv
@@ -229,30 +234,8 @@ SCORING_TEMPLATES: Dict[str, List[ScoringRule]] = {
             ["美世", "怡安翰威特", "韦莱韬悦", "光辉国际", "HayGroup"]),
     ],
 
-    # v2.0 新增：生物医药工艺开发工程师评分模板
-    "bioprocess": [
-        ScoringRule("细胞培养经验", 20,
-            "大规模细胞培养经验（贴壁/悬浮/生物反应器）",
-            ["细胞培养", "细胞扩增", "生物反应器", "生物反应罐", "细胞工厂"]),
-        ScoringRule("生物反应器操作", 20,
-            "KrosFlo/Repligen/波浪式反应器操作经验",
-            ["KrosFlo", "Repligen", "KR2i", "波浪式", "WAVE", "生物反应器", "灌注"]),
-        ScoringRule("CMC/工艺开发", 20,
-            "CMC工艺开发/放大/技术转移经验",
-            ["CMC", "工艺开发", "工艺放大", "技术转移", "DS", "DP", "上游工艺", "下游工艺"]),
-        ScoringRule("干细胞/iPSC/CGT", 15,
-            "干细胞/iPSC/免疫细胞/基因治疗产品工艺经验",
-            ["iPSC", "干细胞", "免疫细胞", "CAR-T", "NK细胞", "基因治疗", "CGT", "细胞治疗"]),
-        ScoringRule("学历背景", 10,
-            "生物工程/生物技术/药学硕士以上",
-            ["硕士", "博士", "生物工程", "生物技术", "药学", "分子生物学"]),
-        ScoringRule("地点匹配", 10,
-            "目标城市（北京）优先",
-            []),
-        ScoringRule("工作年限加分", 5,
-            "5年+生物工艺经验加分",
-            []),
-    ],
+    # 注：公司专属角色模板（如生物医药工艺开发工程师）不再内置，
+    # 统一维护在 references/company_context.md 第4节，执行时按岗位加载。
 }
 
 
